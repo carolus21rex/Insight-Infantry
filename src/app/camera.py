@@ -45,7 +45,6 @@ def interpret_keypress_as_mode(key):
     # shift for readability
     key -= 48
 
-    print(f"check: {key} : {mode}")
     # if the user presses a value that we don't care about (aka not a number) do nothing
     if 0 > key or key >= 10:
         return mode
@@ -62,7 +61,11 @@ def build_camera_image():
     global mode, capture
     if capture is None:
         init_capture()
-    ret, frame = capture.read()
+    try:
+        ret, frame = capture.read()
+    except:
+        print("Error: invalid capture.")
+        return -1
 
     # prevent rubbish input
     if not ret:
