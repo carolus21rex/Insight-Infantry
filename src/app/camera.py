@@ -1,7 +1,8 @@
 import cv2
+import src.app.filters.Filters_Master as fm
 
 # Global variables: List of mode strings, current selected mode
-modes = ["Mode 1", "Mode 2", "Mode 3"]
+modes = ["High Contrast", "Infrared", "Radar"]
 mode = -1
 
 # this is the camera
@@ -81,7 +82,12 @@ def build_camera_image():
     if key != -1:
         mode = interpret_keypress_as_mode(key)
 
-    image = add_rectangles_to_image(frame)
-
+    if 0 <= mode < len(modes):
+        frame = fm.modify_image(frame, modes[mode])
+    if frame is not None:
+        image = add_rectangles_to_image(frame)
+    else:
+        print("Error: Invalid Filter")
+        return -1
     # Create a window and display the image with rectangles
     cv2.imshow("Image with Rectangles", image)
