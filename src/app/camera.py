@@ -1,8 +1,11 @@
 import cv2
 
-# Global parameters: List of mode strings, current selected mode
+# Global variables: List of mode strings, current selected mode
 modes = ["Mode 1", "Mode 2", "Mode 3"]
 mode = -1
+
+# this is the camera
+capture = None
 
 
 def add_rectangles_to_image(image):
@@ -49,8 +52,16 @@ def interpret_keypress_as_mode(key):
     return int(key-1)
 
 
-def build_camera_image(capture):
-    global mode
+def init_capture():
+    global capture
+    capture = cv2.VideoCapture(0)
+
+
+# noinspection PyUnresolvedReferences
+def build_camera_image():
+    global mode, capture
+    if capture is None:
+        init_capture()
     ret, frame = capture.read()
 
     # prevent rubbish input

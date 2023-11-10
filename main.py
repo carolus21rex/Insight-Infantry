@@ -11,7 +11,7 @@ cap = cv2.VideoCapture(0)
 mode = 0
 while True:
 
-    if camera.build_camera_image(cap) == -1:
+    if camera.build_camera_image() == -1:
         break
 
 
