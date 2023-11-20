@@ -1,8 +1,8 @@
 import cv2
-import src.app.filters.Filters_Master as fm
+import src.app.utils.filters.Filters_Master as fm
 
 # Global variables: List of mode strings, current selected mode
-modes = ["High Contrast", "Infrared", "Radar"]
+modes = ["High Contrast", "AI Vision", "Radar"]
 mode = -1
 
 # this is the camera

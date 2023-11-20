@@ -1,2 +1,7 @@
+# requirements.txt
+
+# OpenCV
 opencv-python~=4.8.1.78
+
+# NumPy
 numpy~=1.26.1
