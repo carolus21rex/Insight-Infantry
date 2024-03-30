@@ -5,3 +5,11 @@ opencv-python~=4.8.1.78
 
 # NumPy
 numpy~=1.26.1
+
+# PyTorch
+torch==1.10.0
+
+# TorchVision
+torchvision==0.11.1
+
+
