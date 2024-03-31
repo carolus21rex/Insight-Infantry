@@ -41,7 +41,7 @@ def plot_images_with_boxes(images, boxes):
                 # unpack cords
                 x, y, w, h = box
                 # create rectangle and add it to plot
-                rect = plt.Rectangle((x, y), w, h, linewidth=1, edgecolor='r', facecolor='none')
+                rect = plt.Rectangle((x, y), w, h, linewidth=2, edgecolor='red', facecolor='none')
                 axes[i].add_patch(rect)
         # turn off axis and show plot
         axes[i].axis('off')
@@ -55,7 +55,7 @@ images, boxes = next(iter(data_loader))
 plot_images_with_boxes(images, boxes)
 
 # Print some sample data from the first 5 samples
-for i in range(3):
+for i in range(5):
     print("Sample", i + 1)
     print("Image shape:", images[i].shape)
     print("Bounding boxes:")
