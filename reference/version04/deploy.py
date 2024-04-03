@@ -18,7 +18,7 @@ roi_pooler = torchvision.ops.MultiScaleRoIAlign(featmap_names=['0'],
 
 # Load the trained model
 model = FasterRCNN(backbone,
-                    num_classes=2,
+                    num_classes=3,
                     rpn_anchor_generator=anchor_generator,
                     box_roi_pool=roi_pooler)
 model.load_state_dict(torch.load('trained_model.pth'))

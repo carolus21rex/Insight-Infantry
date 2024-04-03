@@ -84,4 +84,4 @@ def train_model(model, data_loader, device, num_epochs):
 
 
 if __name__ == '__main__':
-    main(10)
+    main(1310)
