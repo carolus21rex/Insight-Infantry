@@ -1,0 +1,8 @@
+names:
+- Human
+- Gun
+nc: '2'
+train: D:\Insight-Infantry\data\train_images\train\images
+train_label: D:\Insight-Infantry\data\train_images\train\labels
+val: D:\Insight-Infantry\data\train_images\val\images
+val_label: D:\Insight-Infantry\data\train_images\val\labels

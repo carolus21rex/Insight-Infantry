@@ -1,77 +1,48 @@
-import cv2
-import os
-import numpy as np
 import torch
-import torchvision
-from torchvision import transforms
-from torchvision.models.detection import fasterrcnn_resnet50_fpn
+import cv2
+import numpy as np
+from torchvision.transforms import ToTensor
+from SelecSLS60_B import Net
+
+# Load the trained weights
+model = Net(nClasses=1000, config='SelecSLS60_B')
+model.load_state_dict(torch.load('detection_model.pth'))
+model.eval()
+
+# Initialize the web camera
+cap = cv2.VideoCapture(0)
 
 
-def prepare_image(image_path):
-    image = cv2.imread(image_path)
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
-    image = transform(image).unsqueeze(0)  # the model requires a batch dimension
-    return image
+# Define any necessary pre-processing function
+def pre_process(f):
+    # This is just an example, you would need to adjust this for your model
+    f = cv2.resize(f, (224, 224))  # Replace with your input size
+    # Convert from BGR to RGB
+    f = cv2.cvtColor(f, cv2.COLOR_BGR2RGB)
+    f = ToTensor()(f).unsqueeze(0)  # Convert to tensor and add batch dimension
+    return f
 
 
-def predict_opencv(model, device, image_path):
-    image = prepare_image(image_path)
-    image = image.to(device)
+while True:
+    # Capture frame-by-frame
+    ret, frame = cap.read()
 
-    model.eval()
+    # Pre-process the captured frame
+    input_data = pre_process(frame)
 
-    with torch.no_grad():
-        prediction = model(image)
-
-    return prediction
-
-
-def draw_boxes_on_image(image_path, prediction):
-    image = cv2.imread(image_path)
-    boxes = prediction[0]['boxes'].data.cpu().numpy().astype(np.int32)
+    # Perform the model inference
+    boxes = model(input_data)
 
     for box in boxes:
-        cv2.rectangle(image, (box[0], box[1]), (box[2], box[3]), color=(0, 255, 0), thickness=2)
+        cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
 
-    cv2.imshow('Image with Boxes', image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # Display the resulting frame
+    cv2.imshow('frame', frame)
 
+    # If 'q' key is pressed, break the loop and close the application
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-def get_device():
-    if torch.cuda.is_available():
-        return torch.device("cuda")
-    return torch.device("cpu")
-
-
-def create_model(num_classes):
-    model = fasterrcnn_resnet50_fpn()
-    in_features = model.roi_heads.box_predictor.cls_score.in_features
-    model.roi_heads.box_predictor = torchvision.models.detection.faster_rcnn.FastRCNNPredictor(in_features,
-                                                                                                   num_classes)
-    return model
-
-
-if __name__ == "__main__":
-    # Set the device
-    device = get_device()
-
-    # Initialize the model
-    model = create_model(num_classes=3)
-
-    # Load the trained model
-    model.load_state_dict(torch.load("detection_model.pth"))
-    model.to(device)
-
-
-    # Path of the image you want to use
-    image_path = os.path.abspath(os.path.join(os.getcwd(), '..', '..', '..', 'data', 'train_images', 'image_0001.jpg'))
-
-    # Get model prediction
-    pred = predict_opencv(model, device, image_path)
-
-    # Draw bounding boxes on the image
-    draw_boxes_on_image(image_path, pred)
+# When everything done, release the capture and destroy all windows
+cap.release()
+cv2.destroyAllWindows()
