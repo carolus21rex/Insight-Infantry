@@ -1,48 +1,44 @@
-import torch
 import cv2
+import torch
 import numpy as np
-from torchvision.transforms import ToTensor
-from SelecSLS60_B import Net
 
-# Load the trained weights
-model = Net(nClasses=1000, config='SelecSLS60_B')
-model.load_state_dict(torch.load('detection_model.pth'))
-model.eval()
+# Load your trained YOLO model
+model = torch.hub.load('ultralytics/yolov5', 'custom', path='best.pt')
 
-# Initialize the web camera
-cap = cv2.VideoCapture(0)
+# Initiate camera feed
+cap = cv2.VideoCapture(0)  # if you have multiple webcams, the parameter can be 0 or 1 or 2 ...
+
+try:
+    while True:
+        # Capture frame-by-frame
+        ret, frame = cap.read()
+
+        init_frame = frame
+
+        # Our operations on the frame come here
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        results = model(frame)  # apply YOLO on image
+
+        # Get box parameters
+        for *box, score, class_id in results.xyxy[0].tolist():
+            x1, y1, x2, y2 = map(int, box)
+            if class_id == 0:
+                cv2.rectangle(init_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            else:
+                cv2.rectangle(init_frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
 
-# Define any necessary pre-processing function
-def pre_process(f):
-    # This is just an example, you would need to adjust this for your model
-    f = cv2.resize(f, (224, 224))  # Replace with your input size
-    # Convert from BGR to RGB
-    f = cv2.cvtColor(f, cv2.COLOR_BGR2RGB)
-    f = ToTensor()(f).unsqueeze(0)  # Convert to tensor and add batch dimension
-    return f
+        # Display the resulting frame
+        cv2.imshow('Processing Video Feed', init_frame)
 
-
-while True:
-    # Capture frame-by-frame
-    ret, frame = cap.read()
-
-    # Pre-process the captured frame
-    input_data = pre_process(frame)
-
-    # Perform the model inference
-    boxes = model(input_data)
-
-    for box in boxes:
-        cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
-
-    # Display the resulting frame
-    cv2.imshow('frame', frame)
-
-    # If 'q' key is pressed, break the loop and close the application
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# When everything done, release the capture and destroy all windows
-cap.release()
-cv2.destroyAllWindows()
+        # Exit loop if 'q' key is pressed
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+except Exception as e:
+    # Handling any exceptions
+    print(f"An error occurred: {e}")
+finally:
+    # When everything done, release the capture
+    cap.release()
+    # Destroy all windows
+    cv2.destroyAllWindows()
