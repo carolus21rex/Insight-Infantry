@@ -2,6 +2,7 @@
 
 --------
 ##  Usage:
+This can be used to train and test any bounding box CNN that uses the YOLOv5 format. This example shows a usage that classifies humans and firearms. Humans are highlighted in a green bounding box while guns are shown in a red bounding box.
 
 --------
 ### Requirements:
