@@ -2,8 +2,15 @@ import cv2
 import torch
 import numpy as np
 
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+print(device)
+
 # Load your trained YOLO model
 model = torch.hub.load('ultralytics/yolov5', 'custom', path='best.pt')
+
+model.to(device).eval()
 
 # Initiate camera feed
 cap = cv2.VideoCapture(0)  # if you have multiple webcams, the parameter can be 0 or 1 or 2 ...
