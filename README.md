@@ -13,6 +13,7 @@ This can be used to train and test any bounding box CNN that uses the YOLOv5 for
 - numpy: used by torch to make tensors, a structure that is AI specific and intended for cuda (GPU) usage
 - dataset: used to train the AI, place in `src/app/train/data`. The source of the dataset is `https://www.kaggle.com/code/ugorjiir/gundetect`, the modified dataset can be found at `https://drive.google.com/file/d/1pxaRp6xoXetNCNZ5A2MjNqESCjyD867I/view?usp=drive_link`
 - best.pth: If you intend to replicate the demonstration video, the model used can be found at: `https://drive.google.com/file/d/1_ozhd9txtZKq7TjH7xP_ixfCzRAz4tq4/view?usp=drive_link`
+- zeromq: used to send tcp data from raspberry pi 0 to laptop in `src/app/communication/wifiPi.py`
   
 --------
 ### Training:
