@@ -7,9 +7,9 @@ opencv-python~=4.8.1.78
 numpy~=1.26.1
 
 # PyTorch
-torch==1.10.0
+torch==1.8.1+cu111
 
 # TorchVision
-torchvision==0.11.1
+torchvision==0.9.1+cu111
 
 
